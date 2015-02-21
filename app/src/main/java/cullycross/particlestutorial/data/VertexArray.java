@@ -14,8 +14,6 @@ import static cullycross.particlestutorial.Constants.*;
  */
 public class VertexArray {
 
-
-
     private final FloatBuffer mFloatBuffer;
 
 
@@ -34,6 +32,12 @@ public class VertexArray {
                 false, stride, mFloatBuffer);
         glEnableVertexAttribArray(attributeLocation);
 
+        mFloatBuffer.position(0);
+    }
+
+    public void updateBuffer(float[] vertexData, int start, int count) {
+        mFloatBuffer.position(start);
+        mFloatBuffer.put(vertexData, start, count);
         mFloatBuffer.position(0);
     }
 }

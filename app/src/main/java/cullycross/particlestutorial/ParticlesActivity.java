@@ -43,7 +43,7 @@ public class ParticlesActivity extends ActionBarActivity {
                     Toast.LENGTH_LONG).show();
             return;
         }
-        setContentView(R.layout.activity_particles);
+        setContentView(mGLSurfaceView);
     }
 
 
