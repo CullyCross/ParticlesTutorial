@@ -14,6 +14,7 @@ import cullycross.particlestutorial.objects.ParticleSystem;
 import cullycross.particlestutorial.programs.ParticleShaderProgram;
 import cullycross.particlestutorial.utils.Geometry;
 import cullycross.particlestutorial.utils.MatrixHelper;
+import cullycross.particlestutorial.utils.TextureHelper;
 
 /**
  * Created by cullycross on 2/14/15.
@@ -32,6 +33,7 @@ public class ParticlesRenderer implements GLSurfaceView.Renderer {
     private ParticleShooter mGreenParticleShooter;
     private ParticleShooter mBlueParticleShooter;
     private long mGlobalStartTime;
+    private int mTexture;
 
 
     public ParticlesRenderer(Context context) {
@@ -43,9 +45,15 @@ public class ParticlesRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE);
+
         mParticleProgram = new ParticleShaderProgram(mContext);
         mParticleSystem = new ParticleSystem(10000);
         mGlobalStartTime = System.nanoTime();
+
+        final float angleVarianceInDegrees = 5f;
+        final float speedVariance = 1f;
 
         final Geometry.Vector particleDirection =
                 new Geometry.Vector(0f, 0.5f, 0f);
@@ -53,20 +61,28 @@ public class ParticlesRenderer implements GLSurfaceView.Renderer {
         mRedParticleShooter = new ParticleShooter(
                 new Geometry.Point(-1f, 0f, 0f),
                 particleDirection,
-                Color.rgb(255, 50, 5)
+                Color.rgb(255, 50, 5),
+                angleVarianceInDegrees,
+                speedVariance
         );
 
         mGreenParticleShooter = new ParticleShooter(
                 new Geometry.Point(0f, 0f, 0f),
                 particleDirection,
-                Color.rgb(25, 255, 25)
+                Color.rgb(25, 255, 25),
+                angleVarianceInDegrees,
+                speedVariance
         );
 
         mBlueParticleShooter = new ParticleShooter(
                 new Geometry.Point(1f, 0f, 0f),
                 particleDirection,
-                Color.rgb(5, 50, 255)
+                Color.rgb(5, 50, 255),
+                angleVarianceInDegrees,
+                speedVariance
         );
+
+        mTexture = TextureHelper.loadTexture(mContext, R.drawable.particle_texture);
     }
 
     @Override
@@ -94,7 +110,7 @@ public class ParticlesRenderer implements GLSurfaceView.Renderer {
         mBlueParticleShooter.addParticles(mParticleSystem, currentTime, 5);
 
         mParticleProgram.useProgram();
-        mParticleProgram.setUniforms(mViewProjectionMatrix, currentTime);
+        mParticleProgram.setUniforms(mViewProjectionMatrix, currentTime, mTexture);
         mParticleSystem.bindData(mParticleProgram);
         mParticleSystem.draw();
 
